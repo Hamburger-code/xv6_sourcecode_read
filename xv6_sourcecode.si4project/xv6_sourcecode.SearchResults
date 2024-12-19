@@ -1,0 +1,266 @@
+---- write Matches (286 in 31 files) ----
+bio.c (kernel) line 19 : // * After changing buffer data, call bwrite to write it to disk.
+bio.c (kernel) line 114 : // Write b's contents to disk.  Must be locked.
+bio.c (kernel) line 116 : bwrite(struct buf *b)
+bwrite in bio.c (kernel) :     panic("bwrite");
+cat in cat.c (user) :     if (write(1, buf, n) != n) {
+cat in cat.c (user) :       fprintf(2, "cat: write error\n");
+console.c (kernel) line 31 : // but not from write().
+consputc in console.c (kernel) :     // if the user typed backspace, overwrite with a space.
+{anoncons} in console.c (kernel) :   uint w;  // Write index
+console.c (kernel) line 56 : // user write()s to the console go here.
+console.c (kernel) line 59 : consolewrite(int user_src, uint64 src, int n)
+consoleinit in console.c (kernel) :   // connect read and write system calls
+consoleinit in console.c (kernel) :   // to consoleread and consolewrite.
+consoleinit in console.c (kernel) :   devsw[CONSOLE].write = consolewrite;
+defs.h (kernel) line 16 : void            bwrite(struct buf*);
+defs.h (kernel) line 35 : int             filewrite(struct file*, uint64, int n);
+defs.h (kernel) line 54 : int             writei(struct inode*, int, uint64, uint, uint);
+defs.h (kernel) line 69 : void            log_write(struct buf*);
+defs.h (kernel) line 77 : int             pipewrite(struct pipe*, uint64, int);
+main in echo.c (user) :     write(1, argv[i], strlen(argv[i]));
+main in echo.c (user) :       write(1, " ", 1);
+main in echo.c (user) :       write(1, "\n", 1);
+elf.h (kernel) line 41 : #define ELF_PROG_FLAG_WRITE     2
+file.c (kernel) line 132 : // Write to file f.
+file.c (kernel) line 135 : filewrite(struct file *f, uint64 addr, int n)
+filewrite in file.c (kernel) :     ret = pipewrite(f->pipe, addr, n);
+filewrite in file.c (kernel) :     if(f->major < 0 || f->major >= NDEV || !devsw[f->major].write)
+filewrite in file.c (kernel) :     ret = devsw[f->major].write(1, addr, n);
+filewrite in file.c (kernel) :     // write a few blocks at a time to avoid exceeding
+filewrite in file.c (kernel) :     // and 2 blocks of slop for non-aligned writes.
+filewrite in file.c (kernel) :     // this really belongs lower down, since writei()
+filewrite in file.c (kernel) :       if ((r = writei(f->ip, 1, addr + i, f->off, n1)) > 0)
+filewrite in file.c (kernel) :         // error from writei
+filewrite in file.c (kernel) :     panic("filewrite");
+devsw in file.h (kernel) :   int (*write)(int, uint64, int);
+print in forktest.c (user) :   write(1, s, strlen(s));
+bzero in fs.c (kernel) :   log_write(bp);
+balloc in fs.c (kernel) :         log_write(bp);
+bfree in fs.c (kernel) :   log_write(bp);
+fs.c (kernel) line 174 : // read or write that inode's ip->valid, ip->size, ip->type, &c.
+ialloc in fs.c (kernel) :       log_write(bp);   // mark it allocated on the disk
+iupdate in fs.c (kernel) :   log_write(bp);
+bmap in fs.c (kernel) :         log_write(bp);
+fs.c (kernel) line 498 : // Write data to inode.
+fs.c (kernel) line 506 : writei(struct inode *ip, int user_src, uint64 src, uint off, uint n)
+writei in fs.c (kernel) :     log_write(bp);
+writei in fs.c (kernel) :   // write the i-node back to disk even if the size didn't change
+fs.c (kernel) line 577 : // Write a new directory entry (name, inum) into the directory dp.
+dirlink in fs.c (kernel) :   if(writei(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+grep in grep.c (user) :         write(1, p, q+1 - p);
+go in grind.c (user) :       write(1, which_child?"B":"A", 1);
+go in grind.c (user) :       write(fd, buf, sizeof(buf));
+go in grind.c (user) :         if(write(fds[1], "x", 1) != 1)
+go in grind.c (user) :           printf("grind: pipe write failed\n");
+go in grind.c (user) :       if(write(fd1, "x", 1) != 1){
+go in grind.c (user) :         printf("grind: write c failed\n");
+log.c (kernel) line 16 : // write an uncommitted system call's updates to disk.
+install_trans in log.c (kernel) :     bwrite(dbuf);  // write dst to disk
+log.c (kernel) line 99 : // Write in-memory log header to disk.
+log.c (kernel) line 103 : write_head(void)
+write_head in log.c (kernel) :   bwrite(buf);
+recover_from_log in log.c (kernel) :   write_head(); // clear the log
+log.c (kernel) line 179 : write_log(void)
+write_log in log.c (kernel) :     bwrite(to);  // write the log
+commit in log.c (kernel) :     write_log();     // Write modified blocks from cache to log
+commit in log.c (kernel) :     write_head();    // Write header to disk -- the real commit
+commit in log.c (kernel) :     install_trans(0); // Now install writes to home locations
+commit in log.c (kernel) :     write_head();    // Erase the transaction from the log
+log.c (kernel) line 207 : // commit()/write_log() will do the disk write.
+log.c (kernel) line 209 : // log_write() replaces bwrite(); a typical use is:
+log.c (kernel) line 212 : //   log_write(bp)
+log.c (kernel) line 215 : log_write(struct buf *b)
+log_write in log.c (kernel) :     panic("log_write outside of trans");
+wsect in mkfs.c (mkfs) :   if(write(fsfd, buf, BSIZE) != BSIZE)
+wsect in mkfs.c (mkfs) :     die("write");
+balloc in mkfs.c (mkfs) :   printf("balloc: write bitmap block at sector %d\n", sb.bmapstart);
+param.h (kernel) line 9 : #define MAXOPBLOCKS  10  // max # of blocks any FS op writes
+pipe in pipe.c (kernel) :   uint nwrite;    // number of bytes written
+pipe in pipe.c (kernel) :   int writeopen;  // write fd is still open
+pipealloc in pipe.c (kernel) :   pi->writeopen = 1;
+pipealloc in pipe.c (kernel) :   pi->nwrite = 0;
+pipeclose in pipe.c (kernel) :     pi->writeopen = 0;
+pipeclose in pipe.c (kernel) :     wakeup(&pi->nwrite);
+pipeclose in pipe.c (kernel) :   if(pi->readopen == 0 && pi->writeopen == 0){
+pipe.c (kernel) line 77 : pipewrite(struct pipe *pi, uint64 addr, int n)
+pipewrite in pipe.c (kernel) :     if(pi->nwrite == pi->nread + PIPESIZE){ //DOC: pipewrite-full
+pipewrite in pipe.c (kernel) :       sleep(&pi->nwrite, &pi->lock);
+pipewrite in pipe.c (kernel) :       pi->data[pi->nwrite++ % PIPESIZE] = ch;
+piperead in pipe.c (kernel) :   while(pi->nread == pi->nwrite && pi->writeopen){  //DOC: pipe-empty
+piperead in pipe.c (kernel) :     if(pi->nread == pi->nwrite)
+piperead in pipe.c (kernel) :   wakeup(&pi->nwrite);  //DOC: piperead-wakeup
+putc in printf.c (user) :   write(fd, &c, 1);
+riscv.h (kernel) line 317 : // read and write tp, the thread pointer, which xv6 uses to hold
+getcmd in sh.c (user) :   write(2, "$ ", 2);
+main in stressfs.c (user) :   printf("write %d\n", i);
+main in stressfs.c (user) :     write(fd, data, sizeof(data));
+syscall.c (kernel) line 98 : extern uint64 sys_write(void);
+syscall.c (kernel) line 123 : [SYS_write]   sys_write,
+syscall.h (kernel) line 17 : #define SYS_write  16
+sysfile.c (kernel) line 83 : sys_write(void)
+sys_write in sysfile.c (kernel) :   return filewrite(f, p, n);
+sys_unlink in sysfile.c (kernel) :   if(writei(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+sys_unlink in sysfile.c (kernel) :     panic("unlink: writei");
+uart.c (kernel) line 20 : // read vs write.
+uart.c (kernel) line 39 : #define WriteReg(reg, v) (*(Reg(reg)) = (v))
+uart.c (kernel) line 45 : uint64 uart_tx_w; // write next to uart_tx_buf[uart_tx_w % UART_TX_BUF_SIZE]
+uartinit in uart.c (kernel) :   WriteReg(IER, 0x00);
+uartinit in uart.c (kernel) :   WriteReg(LCR, LCR_BAUD_LATCH);
+uartinit in uart.c (kernel) :   WriteReg(0, 0x03);
+uartinit in uart.c (kernel) :   WriteReg(1, 0x00);
+uartinit in uart.c (kernel) :   WriteReg(LCR, LCR_EIGHT_BITS);
+uartinit in uart.c (kernel) :   WriteReg(FCR, FCR_FIFO_ENABLE | FCR_FIFO_CLEAR);
+uartinit in uart.c (kernel) :   WriteReg(IER, IER_TX_ENABLE | IER_RX_ENABLE);
+uart.c (kernel) line 85 : // by write().
+uartputc_sync in uart.c (kernel) :   WriteReg(THR, c);
+uartstart in uart.c (kernel) :     WriteReg(THR, c);
+user.h (user) line 8 : int write(int, const void*, int);
+copyin in usertests.c (user) :     int n = write(fd, (void*)addr, 8192);
+copyin in usertests.c (user) :       printf("write(fd, %p, 8192) returned %d, not -1\n", (void*)addr, n);
+copyin in usertests.c (user) :     n = write(1, (char*)addr, 8192);
+copyin in usertests.c (user) :       printf("write(1, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
+copyin in usertests.c (user) :     n = write(fds[1], (char*)addr, 8192);
+copyin in usertests.c (user) :       printf("write(pipe, %p, 8192) returned %d, not -1 or 0\n", (void*)addr, n);
+usertests.c (user) line 76 : // that write user memory with copyout?
+copyout in usertests.c (user) :     n = write(fds[1], "x", 1);
+copyout in usertests.c (user) :       printf("pipe write failed\n");
+usertests.c (user) line 244 : // See if the kernel refuses to read/write user memory that the
+rwsbrk in usertests.c (user) :   n = write(fd, (void*)(a+4096), 1024);
+rwsbrk in usertests.c (user) :     printf("write(fd, %p, 1024) returned %d, not -1\n", (void*)a+4096, n);
+truncate1 in usertests.c (user) :   write(fd1, "abcd", 4);
+truncate1 in usertests.c (user) :   write(fd1, "abcdef", 6);
+usertests.c (user) line 347 : // write to an open FD whose file has just been truncated.
+usertests.c (user) line 348 : // this causes a write at an offset beyond the end of the file.
+usertests.c (user) line 349 : // such writes fail on xv6 (unlike POSIX) but at least
+truncate2 in usertests.c (user) :   write(fd1, "abcd", 4);
+truncate2 in usertests.c (user) :   int n = write(fd1, "x", 1);
+truncate2 in usertests.c (user) :     printf("%s: write returned %d, expected -1\n", s, n);
+truncate3 in usertests.c (user) :       int n = write(fd, "1234567890", 10);
+truncate3 in usertests.c (user) :         printf("%s: write got %d, expected 10\n", s, n);
+truncate3 in usertests.c (user) :     int n = write(fd, "xxx", 3);
+truncate3 in usertests.c (user) :       printf("%s: write got %d, expected 3\n", s, n);
+usertests.c (user) line 478 : // does the error path in open() for attempt to write a
+openiputtest in usertests.c (user) :       printf("%s: open directory for write succeeded\n", s);
+usertests.c (user) line 541 : writetest(char *s)
+writetest in usertests.c (user) :     if(write(fd, "aaaaaaaaaa", SZ) != SZ){
+writetest in usertests.c (user) :       printf("%s: error: write aa %d new file failed\n", s, i);
+writetest in usertests.c (user) :     if(write(fd, "bbbbbbbbbb", SZ) != SZ){
+writetest in usertests.c (user) :       printf("%s: error: write bb %d new file failed\n", s, i);
+usertests.c (user) line 582 : writebig(char *s)
+writebig in usertests.c (user) :     if(write(fd, buf, BSIZE) != BSIZE){
+writebig in usertests.c (user) :       printf("%s: error: write big file failed i=%d\n", s, i);
+usertests.c (user) line 736 : // simple fork and pipe read/write
+pipe1 in usertests.c (user) :       if(write(fds[1], buf, SZ) != SZ){
+preempt in usertests.c (user) :     if(write(pfds[1], "x", 1) != 1)
+preempt in usertests.c (user) :       printf("%s: preempt write error", s);
+usertests.c (user) line 1094 : // two processes write to the same file descriptor
+sharedfd in usertests.c (user) :     if(write(fd, buf, sizeof(buf)) != sizeof(buf)){
+sharedfd in usertests.c (user) :       printf("%s: write sharedfd failed\n", s);
+usertests.c (user) line 1151 : // four processes write different files at the same
+fourfiles in usertests.c (user) :         if((n = write(fd, buf, SZ)) != SZ){
+fourfiles in usertests.c (user) :           printf("write failed %d\n", n);
+unlinkread in usertests.c (user) :   write(fd, "hello", SZ);
+unlinkread in usertests.c (user) :   write(fd1, "yyy", 3);
+unlinkread in usertests.c (user) :   if(write(fd, buf, 10) != 10){
+unlinkread in usertests.c (user) :     printf("%s: unlinkread write failed\n", s);
+linktest in usertests.c (user) :   if(write(fd, "hello", SZ) != SZ){
+linktest in usertests.c (user) :     printf("%s: write lf1 failed\n", s);
+subdir in usertests.c (user) :   write(fd, "ff", 2);
+subdir in usertests.c (user) :   write(fd, "FF", 2);
+usertests.c (user) line 1704 : // test writes that are larger than the log.
+usertests.c (user) line 1706 : bigwrite(char *s)
+bigwrite in usertests.c (user) :   unlink("bigwrite");
+bigwrite in usertests.c (user) :     fd = open("bigwrite", O_CREATE | O_RDWR);
+bigwrite in usertests.c (user) :       printf("%s: cannot create bigwrite\n", s);
+bigwrite in usertests.c (user) :       int cc = write(fd, buf, sz);
+bigwrite in usertests.c (user) :         printf("%s: write(%d) ret %d\n", s, sz, cc);
+bigwrite in usertests.c (user) :     unlink("bigwrite");
+bigfile in usertests.c (user) :     if(write(fd, buf, SZ) != SZ){
+bigfile in usertests.c (user) :       printf("%s: write bigfile failed\n", s);
+dirfile in usertests.c (user) :   if(write(fd, "x", 1) > 0){
+dirfile in usertests.c (user) :     printf("%s: write . succeeded!\n", s);
+usertests.c (user) line 2147 : // user code should not be able to write to addresses above MAXVA.
+sbrkfail in usertests.c (user) :       write(fds[1], "x", 1);
+usertests.c (user) line 2241 : // test reads/writes from/to allocated memory
+sbrkarg in usertests.c (user) :   if ((n = write(fd, a, PGSIZE)) < 0) {
+sbrkarg in usertests.c (user) :     printf("%s: write sbrk failed\n", s);
+sbrkarg in usertests.c (user) :   // test writes to allocated memory
+usertests.c (user) line 2301 : // are larger than a page? or does it write
+fsfull in usertests.c (user) :       int cc = write(fd, buf, BSIZE);
+usertests.c (user) line 2432 : // check that writes to a few forbidden addresses
+usertests.c (user) line 2435 : nowrite(char *s)
+nowrite in usertests.c (user) :       printf("%s: write to %p did not fail!\n", s, addr);
+sbrklast in usertests.c (user) :   write(fd, p, 1);
+usertests.c (user) line 2606 :   {writetest, "writetest"},
+usertests.c (user) line 2607 :   {writebig, "writebig"},
+usertests.c (user) line 2629 :   {bigwrite, "bigwrite"},
+usertests.c (user) line 2647 :   {nowrite, "nowrite"},
+usertests.c (user) line 2702 : // concurrent writes to try to provoke deadlock in the virtio disk
+usertests.c (user) line 2705 : manywrites(char *s)
+manywrites in usertests.c (user) :           int cc = write(fd, buf, sz);
+manywrites in usertests.c (user) :             printf("%s: write(%d) ret %d\n", s, sz, cc);
+usertests.c (user) line 2756 : // regression test. does write() with an invalid buffer pointer cause
+usertests.c (user) line 2762 : badwrite(char *s)
+badwrite in usertests.c (user) :     write(fd, (char*)0xffffffffffL, 1);
+badwrite in usertests.c (user) :   if(write(fd, "x", 1) != 1){
+badwrite in usertests.c (user) :     printf("write failed\n");
+diskfull in usertests.c (user) :       if(write(fd, buf, BSIZE) != BSIZE){
+usertests.c (user) line 2944 :   {manywrites, "manywrites"},
+usertests.c (user) line 2945 :   {badwrite, "badwrite" },
+countfree in usertests.c (user) :       if(write(fds[1], "x", 1) != 1){
+countfree in usertests.c (user) :         printf("write() failed in countfree()\n");
+usys.pl (user) line 23 : entry("write");
+virtio.h (kernel) line 18 : #define VIRTIO_MMIO_QUEUE_SEL		0x030 // select queue, write-only
+virtio.h (kernel) line 20 : #define VIRTIO_MMIO_QUEUE_NUM		0x038 // size of current queue, write-only
+virtio.h (kernel) line 22 : #define VIRTIO_MMIO_QUEUE_NOTIFY	0x050 // write-only
+virtio.h (kernel) line 24 : #define VIRTIO_MMIO_INTERRUPT_ACK	0x064 // write-only
+virtio.h (kernel) line 25 : #define VIRTIO_MMIO_STATUS		0x070 // read/write
+virtio.h (kernel) line 26 : #define VIRTIO_MMIO_QUEUE_DESC_LOW	0x080 // physical address for descriptor table, write-only
+virtio.h (kernel) line 28 : #define VIRTIO_MMIO_DRIVER_DESC_LOW	0x090 // physical address for available ring, write-only
+virtio.h (kernel) line 30 : #define VIRTIO_MMIO_DEVICE_DESC_LOW	0x0a0 // physical address for used ring, write-only
+virtio.h (kernel) line 42 : #define VIRTIO_BLK_F_CONFIG_WCE     11	/* Writeback mode available in config */
+virtio.h (kernel) line 60 : #define VRING_DESC_F_WRITE 2 // device writes (vs read)
+virtq_avail in virtio.h (kernel) :   uint16 idx;   // driver will write ring[idx] next
+virtio.h (kernel) line 87 : #define VIRTIO_BLK_T_OUT 1 // write the disk
+disk in virtio_disk.c (kernel) :   // driver tells the device where to read and write individual
+disk in virtio_disk.c (kernel) :   // a ring in which the driver writes descriptor numbers
+disk in virtio_disk.c (kernel) :   // a ring in which the device writes descriptor numbers that
+virtio_disk_init in virtio_disk.c (kernel) :   // write physical addresses.
+virtio_disk.c (kernel) line 216 : virtio_disk_rw(struct buf *b, int write)
+virtio_disk_rw in virtio_disk.c (kernel) :   if(write)
+virtio_disk_rw in virtio_disk.c (kernel) :     buf0->type = VIRTIO_BLK_T_OUT; // write the disk
+virtio_disk_rw in virtio_disk.c (kernel) :   if(write)
+virtio_disk_rw in virtio_disk.c (kernel) :     disk.desc[idx[1]].flags = VRING_DESC_F_WRITE; // device writes b->data
+virtio_disk_rw in virtio_disk.c (kernel) :   disk.info[idx[0]].status = 0xff; // device writes 0 on success
+virtio_disk_rw in virtio_disk.c (kernel) :   disk.desc[idx[2]].flags = VRING_DESC_F_WRITE; // device writes the status
+kvminithart in vm.c (kernel) :   // wait for any previous writes to the page table memory to finish.
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 18 :     bwrite                                                                              (Function at line 106-111)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 41 :     consolewrite                                                                        (Function at line 58-70)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 56 :     bwrite                                                                              (Function Prototype at line 16-16)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 79 :     filewrite                                                                           (Function Prototype at line 35-35)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 106 :     log_write                                                                           (Function Prototype at line 69-69)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 121 :     pipewrite                                                                           (Function Prototype at line 77-77)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 178 :     writei                                                                              (Function Prototype at line 54-54)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 202 :     ELF_PROG_FLAG_WRITE                                                                 (Constant at line 41-41)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 271 :     filewrite                                                                           (Function at line 134-180)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 278 :         write                                                                               (Data Member at line 35-35)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 342 :     writei                                                                              (Function at line 505-538)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 782 :     log_write                                                                           (Function at line 214-234)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 786 :     write_head                                                                          (Function at line 102-113)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 787 :     write_log                                                                           (Function at line 178-190)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 896 :         nwrite                                                                              (Data Member at line 17-17)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 898 :         writeopen                                                                           (Data Member at line 19-19)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 903 :     pipewrite                                                                           (Function at line 76-102)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1321 :     sys_write                                                                           (Function Prototype at line 98-98)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1343 :     SYS_write                                                                           (Constant at line 17-17)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1361 :     sys_write                                                                           (Function at line 82-94)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1428 :     WriteReg                                                                            (Macro at line 39-39)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1489 :     write                                                                               (Function Prototype at line 8-8)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1493 :     badwrite                                                                            (Function at line 2761-2790)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1498 :     bigwrite                                                                            (Function at line 1705-1727)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1532 :     manywrites                                                                          (Function at line 2704-2753)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1535 :     nowrite                                                                             (Function at line 2434-2459)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1570 :     writebig                                                                            (Function at line 581-632)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1571 :     writetest                                                                           (Function at line 540-578)
+xv6_sourcecode_report (xv6_sourcecode.si4project) line 1631 :     VRING_DESC_F_WRITE                                                                  (Constant at line 60-60)
