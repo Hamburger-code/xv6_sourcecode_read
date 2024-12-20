@@ -55,7 +55,7 @@ memset(void *dst, int c, uint n)
 }
 
 char*
-strchr(const char *s, char c)
+strchr(const char *s, char c)//检查字符c有没有在字符串s中。有则返回字符串中指向该字符的位置
 {
   for(; *s; s++)
     if(*s == c)
@@ -96,13 +96,13 @@ stat(const char *n, struct stat *st)
 }
 
 int
-atoi(const char *s)
+atoi(const char *s)//将数字字符串转化为数字
 {
   int n;
 
   n = 0;
   while('0' <= *s && *s <= '9')
-    n = n*10 + *s++ - '0';
+    n = n*10 + *s++ - '0';  （*s++,*优先级高于++，则先取s指针指向的字符，再对指针变量s加1）
   return n;
 }
 

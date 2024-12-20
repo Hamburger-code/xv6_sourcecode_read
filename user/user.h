@@ -5,7 +5,7 @@ int fork(void);
 int exit(int) __attribute__((noreturn));
 int wait(int*);
 int pipe(int*);
-int write(int, const void*, int);
+int write(int, const void*, int);//const void* 表示一个任何类型的常量指针，该指针指向一个常量
 int read(int, void*, int);
 int close(int);
 int kill(int);

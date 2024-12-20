@@ -15,14 +15,14 @@ wc(int fd, char *name)
   inword = 0;
   while((n = read(fd, buf, sizeof(buf))) > 0){
     for(i=0; i<n; i++){
-      c++;
+      c++;//c记录总共有多少个字符，统计字符数
       if(buf[i] == '\n')
-        l++;
+        l++;//l记录总共有几个换行符，统计行数
       if(strchr(" \r\t\n\v", buf[i]))
-        inword = 0;
+        inword = 0;//表示此时不是单词部分
       else if(!inword){
-        w++;
-        inword = 1;
+        w++; //w是非特殊字符（空格，回车，制表符，换行符，垂直制表符）,w统计的是单词word的数量
+        inword = 1;//表示是单词部分
       }
     }
   }
@@ -39,7 +39,7 @@ main(int argc, char *argv[])
   int fd, i;
 
   if(argc <= 1){
-    wc(0, "");
+    wc(0, "");//直接统计字符数量
     exit(0);
   }
 
@@ -48,7 +48,7 @@ main(int argc, char *argv[])
       printf("wc: cannot open %s\n", argv[i]);
       exit(1);
     }
-    wc(fd, argv[i]);
+    wc(fd, argv[i]);//统计字符数量
     close(fd);
   }
   exit(0);

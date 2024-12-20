@@ -49,7 +49,7 @@ sys_sbrk(void)
 }
 
 uint64
-sys_sleep(void)
+sys_sleep(void) //系统调用sleep的实现
 {
   int n;
   uint ticks0;

@@ -1,4 +1,4 @@
-struct file {
+struct file { //文件结构体
   enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
   int ref; // reference count
   char readable;

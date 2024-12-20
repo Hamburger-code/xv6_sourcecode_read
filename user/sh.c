@@ -136,7 +136,7 @@ getcmd(char *buf, int nbuf)
 {
   write(2, "$ ", 2);//fd = 2对应标准输出文件,界面显示“$ ”,2个字符
   memset(buf, 0, nbuf); //将buf中的内容全部置0
-  gets(buf, nbuf);//读取标准输入文件 fd = 0
+  gets(buf, nbuf);//读取标准输入文件 fd = 0，fd=0为标准输入文件
   if(buf[0] == 0) // EOF
     return -1;
   return 0;
@@ -150,7 +150,7 @@ main(void)
 
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){ //确保基本的三个文件是打开的
-    if(fd >= 3){  //fd = 0，fd = 1, fd = 2 标准输入，标准输出，标准错误输出
+    if(fd >= 3){  //fd = 0，fd = 1, fd = 2 标准输入，标准输出，标准错误输出 （xv6中，fd = 0为标准输入，fd =1,2可能都为标准输出(1是标准输出，2是标准错误输出，展现形式都是打印到命令行界面))
       close(fd);
       break;
     }
