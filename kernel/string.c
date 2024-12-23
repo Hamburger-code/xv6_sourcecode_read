@@ -28,24 +28,24 @@ memcmp(const void *v1, const void *v2, uint n)
 }
 
 void*
-memmove(void *dst, const void *src, uint n)
+memmove(void *dst, const void *src, uint n)//从源地址向目的地址搬运n个字符，距离来说，将源地址部分的内容搬运复制到目的地址处
 {
   const char *s;
   char *d;
 
   if(n == 0)
-    return dst;
+    return dst;//搬运0个字符就直接返回目的地址
   
   s = src;
   d = dst;
-  if(s < d && s + n > d){
+  if(s < d && s + n > d){ //处理源地址在前，目的地址在后的重叠情况，这种时候必须从后往前搬运
     s += n;
     d += n;
     while(n-- > 0)
-      *--d = *--s;
-  } else
+      *--d = *--s;//先递减再复制
+  } else   //源地址在后或者不重叠的情况，之前从前往后搬运就好了
     while(n-- > 0)
-      *d++ = *s++;
+      *d++ = *s++;//先复制再递增
 
   return dst;
 }

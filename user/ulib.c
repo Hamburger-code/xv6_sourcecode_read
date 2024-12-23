@@ -26,11 +26,11 @@ strcpy(char *s, const char *t)
 }
 
 int
-strcmp(const char *p, const char *q)
+strcmp(const char *p, const char *q)//比较两字符串的差异
 {
   while(*p && *p == *q)
     p++, q++;
-  return (uchar)*p - (uchar)*q;
+  return (uchar)*p - (uchar)*q;//如果完全相同直接返回0，不同则返回相对大小
 }
 
 uint

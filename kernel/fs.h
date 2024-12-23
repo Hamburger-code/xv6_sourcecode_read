@@ -50,11 +50,11 @@ struct dinode {
 // Block of free map containing bit for block b
 #define BBLOCK(b, sb) ((b)/BPB + sb.bmapstart)
 
-// Directory is a file containing a sequence of dirent structures.
+// Directory is a file containing a sequence of dirent structures. //目录是包含一系列dirent结构的文件
 #define DIRSIZ 14
 
-struct dirent {
-  ushort inum;
-  char name[DIRSIZ];
+struct dirent {   //目录结构体
+  ushort inum;//这个含义暂时未知
+  char name[DIRSIZ]; //目录名,最长13个字符和一个"\0"
 };
 

@@ -28,6 +28,8 @@ int main (int argc, char *argv[]) {
 
 	if (pid == 0) {
 		//这里是子进程
+		//我想看一下子进程文件描述符的数值，我的理解是子进程的文件描述符一次递增但是指向的是同一个文件，但实际上文件描述符的数值是相同的
+		fprintf(1,"c_process: p1[0]:%d,p1[1]:%d,p2[0]:%d,p2[1]:%d\n",p1[0],p1[1],p2[0],p2[1]);
 		close(p1[1]);//关闭1号管道的写
 		int num = read(p1[0],recv,sizeof(recv));
 		if (num <= 0) {
@@ -48,6 +50,7 @@ int main (int argc, char *argv[]) {
 	}
 	else if (pid > 0) {
 		//这里是父进程
+		fprintf(1,"p_process: p1[0]:%d,p1[1]:%d,p2[0]:%d,p2[1]:%d\n",p1[0],p1[1],p2[0],p2[1]);
 		close(p1[0]);//关闭1号管道的读
 		if (write(p1[1], "P->C:son", sizeof("P->C:son")) != sizeof("P->C:son")) {
 			fprintf(2, "p->c write error\n");

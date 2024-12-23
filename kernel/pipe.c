@@ -10,6 +10,8 @@
 
 #define PIPESIZE 512
 
+//管道类似于消息队列和消息邮箱，带有阻塞机制的消息传递
+
 struct pipe {     //管道结构体
   struct spinlock lock;//包含一个自旋锁
   char data[PIPESIZE]; //数组用于保存管道数据
@@ -56,7 +58,7 @@ pipealloc(struct file **f0, struct file **f1)
 }
 
 void
-pipeclose(struct pipe *pi, int writable)
+pipeclose(struct pipe *pi, int writable) //并不是用来同时关闭两个端口的，关闭的是其中一端的端口。
 {
   acquire(&pi->lock);//获取锁
   if(writable){
@@ -66,7 +68,7 @@ pipeclose(struct pipe *pi, int writable)
     pi->readopen = 0;//可读文件描述符关闭
     wakeup(&pi->nwrite);//唤醒写入
   }
-  if(pi->readopen == 0 && pi->writeopen == 0){
+  if(pi->readopen == 0 && pi->writeopen == 0){//两段读写文件描述符都释放关闭了
     release(&pi->lock);//释放锁
     kfree((char*)pi);//释放管道内存
   } else
@@ -79,16 +81,16 @@ pipewrite(struct pipe *pi, uint64 addr, int n)
   int i = 0;
   struct proc *pr = myproc();
 
-  acquire(&pi->lock); 
+  acquire(&pi->lock); //获取锁，拿到临界区权限
   while(i < n){
-    if(pi->readopen == 0 || killed(pr)){//如果不可读且进程被杀死，释放锁，返回-1
+    if(pi->readopen == 0 || killed(pr)){//如果可读文件描述符消失，或者进程被杀死，释放锁，返回-1，简单理解：管道另一面没有人读的话，这个管道就废了
       release(&pi->lock);
       return -1;
     }
-    if(pi->nwrite == pi->nread + PIPESIZE){ //DOC: pipewrite-full //可写缓存区已满
-      wakeup(&pi->nread);//唤醒读
-      sleep(&pi->nwrite, &pi->lock);
-    } else {
+    if(pi->nwrite == pi->nread + PIPESIZE){ //DOC: pipewrite-full //缓存区被写满，但是内容还没写完
+      wakeup(&pi->nread);//唤醒读的一边去读
+      sleep(&pi->nwrite, &pi->lock);//同时写阻塞，暂时释放锁
+    } else {//缓存区没满就往里面继续写
       char ch;
       if(copyin(pr->pagetable, &ch, addr + i, 1) == -1)
         break;
@@ -96,8 +98,8 @@ pipewrite(struct pipe *pi, uint64 addr, int n)
       i++;
     }
   }
-  wakeup(&pi->nread);
-  release(&pi->lock);
+  wakeup(&pi->nread);//内容写完之后就唤醒另一边去读。
+  release(&pi->lock);//释放锁
 
   return i;
 }
@@ -109,22 +111,23 @@ piperead(struct pipe *pi, uint64 addr, int n)
   struct proc *pr = myproc();
   char ch;
 
-  acquire(&pi->lock);
-  while(pi->nread == pi->nwrite && pi->writeopen){  //DOC: pipe-empty
-    if(killed(pr)){
+  acquire(&pi->lock);//获取锁
+  while(pi->nread == pi->nwrite && pi->writeopen){  //DOC: pipe-empty，如果另一端可写文件描述符还在，管道满了
+    if(killed(pr)){    //进程被杀死才会释放
       release(&pi->lock);
       return -1;
     }
-    sleep(&pi->nread, &pi->lock); //DOC: piperead-sleep
+    sleep(&pi->nread, &pi->lock); //DOC: piperead-sleep //管道为空，另一端可写入的文件描述符还在，阻塞等待，这就是pingpong.c中提到的当管道为空
+    //以及对面可写文件描述符还在的话，读取端会一直阻塞下去
   }
   for(i = 0; i < n; i++){  //DOC: piperead-copy
-    if(pi->nread == pi->nwrite)
+    if(pi->nread == pi->nwrite)//读完了就退出
       break;
-    ch = pi->data[pi->nread++ % PIPESIZE];
+    ch = pi->data[pi->nread++ % PIPESIZE];//没读完就继续读
     if(copyout(pr->pagetable, addr + i, &ch, 1) == -1)
       break;
   }
-  wakeup(&pi->nwrite);  //DOC: piperead-wakeup
-  release(&pi->lock);
+  wakeup(&pi->nwrite);  //DOC: piperead-wakeup 内容读完就唤醒写的一端（如果有写的一端的话）
+  release(&pi->lock);//释放锁
   return i;
 }
