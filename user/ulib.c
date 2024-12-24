@@ -20,7 +20,7 @@ strcpy(char *s, const char *t)
   char *os;
 
   os = s;
-  while((*s++ = *t++) != 0)
+  while((*s++ = *t++) != 0)//当s被赋值为‘\0’时则退出。
     ;
   return os;
 }
